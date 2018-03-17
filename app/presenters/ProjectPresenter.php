@@ -33,13 +33,26 @@ class ProjectPresenter extends Nette\Application\UI\Presenter
         $form = new Form; // means Nette\Application\UI\Form
 
         $form->addText('name', 'Název projektu')->setRequired();
-        $form->addText('deadline', 'Termín dokončení')->setRequired();
+        $form->addText('deadline', 'Termín dokončení')->setHtmlType('date')->setRequired();
         $form->addSelect('type_id', 'Typ projektu', $select);
         $form->addCheckbox('is_web', 'Webový projekt');
 
         $form->addSubmit('send', 'Vytvořit projekt');
+        $form->onSuccess[] = [$this, 'newProjectFormSucceeded'];
 
         return $form;
+    }
+
+    public function newProjectFormSucceeded($form, $values) {
+        $this->database->table('projects')->insert([
+            'name' => $values->name,
+            'deadline' => $values->deadline,
+            'type_id' => $values->type_id,
+            'is_web' => $values->is_web,
+        ]);
+
+        $this->flashMessage('Projekt byl úspěšně vytvořen', 'success');
+        $this->redirect('this');
     }
 
 }
