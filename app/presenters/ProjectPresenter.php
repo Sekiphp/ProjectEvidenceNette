@@ -55,4 +55,15 @@ class ProjectPresenter extends Nette\Application\UI\Presenter
         $this->redirect('this');
     }
 
+    /**
+     * Smazani projektu
+     * @param  int $projectId
+     */
+    public function actionDelete(int $projectId) {
+        $this->database->table('projects')->where('id', $projectId)->delete();
+
+        $this->flashMessage('Projekt byl úspěšně smazán', 'success');
+        $this->redirect('Homepage:default');
+    }
+
 }
