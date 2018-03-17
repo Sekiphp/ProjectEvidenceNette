@@ -11,6 +11,8 @@
 	<div n:foreach="$flashes as $flash" n:class="flash, $flash->type">{$flash->message}</div>
 
     <a href="{link Homepage:default}">Seznam projektů</a>
+    <a href="{link Project:new}">Nový projekt</a>
+
 	{include content}
 
 	{block scripts}
