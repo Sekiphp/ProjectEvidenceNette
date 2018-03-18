@@ -14,8 +14,12 @@ class ProjectPresenter extends Nette\Application\UI\Presenter
         $this->database = $database;
     }
 
+    /**
+     *
+     * @param  int $projectId
+     */
     public function renderEdit(int $projectId) {
-        $this->template->project = $this->database->table('projects')->get($projectId);
+        // empty
     }
 
     /**
@@ -30,7 +34,7 @@ class ProjectPresenter extends Nette\Application\UI\Presenter
      *
      * @return Nette\Application\UI\Form
      */
-    protected function createComponentNewProjectForm() {
+    protected function createComponentProjectForm() {
         // priprava dat do selectu
         $projectTypes = $this->database->table('types')->fetchPairs('id', 'name');
 
@@ -41,26 +45,45 @@ class ProjectPresenter extends Nette\Application\UI\Presenter
         $form->addSelect('type_id', 'Typ projektu', $projectTypes);
         $form->addCheckbox('is_web', 'Webový projekt');
 
-        $form->addSubmit('send', 'Vytvořit projekt');
-        $form->onSuccess[] = [$this, 'newProjectFormSucceeded'];
+        $form->addSubmit('send', 'Uložit projekt');
+        $form->onSuccess[] = [$this, 'postProjectFormSucceeded'];
 
         return $form;
     }
 
-    public function newProjectFormSucceeded($form, $values) {
-        $this->database->table('projects')->insert([
-            'name' => $values->name,
-            'deadline' => $values->deadline,
-            'type_id' => $values->type_id,
-            'is_web' => $values->is_web,
-        ]);
+    /**
+     * Odeslani formulare - novy projekt
+     *
+     * @param  $form
+     * @param  Object $values
+     */
+    public function postProjectFormSucceeded($form, $values) {
+        $projectId = $this->getParameter('projectId');
 
-        $this->flashMessage('Projekt byl úspěšně vytvořen', 'success');
+        if ($projectId) {
+            // budeme upravovat
+            $post = $this->database->table('projects')->get($projectId);
+            $post->update($values);
+
+            $this->flashMessage('Projekt byl úspěšně upraven', 'success');
+        }
+        else {
+            $this->database->table('projects')->insert([
+                'name' => $values->name,
+                'deadline' => $values->deadline,
+                'type_id' => $values->type_id,
+                'is_web' => $values->is_web,
+            ]);
+
+            $this->flashMessage('Projekt byl úspěšně vytvořen', 'success');
+        }
+
         $this->redirect('this');
     }
 
     /**
      * Smazani projektu
+     *
      * @param  int $projectId
      */
     public function actionDelete(int $projectId) {
@@ -74,6 +97,26 @@ class ProjectPresenter extends Nette\Application\UI\Presenter
         }
 
         $this->redirect('Homepage:default');
+    }
+
+    /**
+     * Editace projektu
+     *
+     * @param  int $projectId
+     */
+    public function actionEdit(int $projectId) {
+        $project = $this->database->table('projects')->get($projectId);
+        $this->template->project = $project;
+
+        if (!$project) {
+            $this->error("Projekt {$projectId} nebyl nalezen");
+        }
+
+        // default hodnota v input type=date
+        $proj = $project->toArray();
+        $proj['deadline'] = (string)$proj['deadline']->format("Y-m-d");
+
+        $this['projectForm']->setDefaults($proj);
     }
 
 }
