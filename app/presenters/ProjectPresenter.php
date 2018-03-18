@@ -4,18 +4,18 @@ namespace App\Presenters;
 
 use Nette;
 use Nette\Application\UI\Form;
+use App\Model\ProjectManager;
 
 
 class ProjectPresenter extends Nette\Application\UI\Presenter
 {
-    private $database;
+    private $projectManager;
 
-    public function __construct(Nette\Database\Context $database) {
-        $this->database = $database;
+    public function __construct(ProjectManager $manager) {
+        $this->projectManager = $manager;
     }
 
     /**
-     *
      * @param  int $projectId
      */
     public function renderEdit(int $projectId) {
@@ -36,7 +36,7 @@ class ProjectPresenter extends Nette\Application\UI\Presenter
      */
     protected function createComponentProjectForm() {
         // priprava dat do selectu
-        $projectTypes = $this->database->table('types')->fetchPairs('id', 'name');
+        $projectTypes = $this->projectManager->getProjectTypes();
 
         $form = new Form; // means Nette\Application\UI\Form
 
@@ -62,13 +62,13 @@ class ProjectPresenter extends Nette\Application\UI\Presenter
 
         if ($projectId) {
             // budeme upravovat
-            $post = $this->database->table('projects')->get($projectId);
+            $post = $this->projectManager->getProject($projectId);
             $post->update($values);
 
             $this->flashMessage('Projekt byl úspěšně upraven', 'success');
         }
         else {
-            $this->database->table('projects')->insert([
+            $this->projectManager->createProject([
                 'name' => $values->name,
                 'deadline' => $values->deadline,
                 'type_id' => $values->type_id,
@@ -87,7 +87,7 @@ class ProjectPresenter extends Nette\Application\UI\Presenter
      * @param  int $projectId
      */
     public function actionDelete(int $projectId) {
-        $bool = $this->database->table('projects')->where('id', $projectId)->delete();
+        $bool = $this->projectManager->deleteProjectById($projectId);
 
         if ($bool) {
             $this->flashMessage('Projekt byl úspěšně smazán', 'success');
@@ -105,7 +105,7 @@ class ProjectPresenter extends Nette\Application\UI\Presenter
      * @param  int $projectId
      */
     public function actionEdit(int $projectId) {
-        $project = $this->database->table('projects')->get($projectId);
+        $project = $this->projectManager->getProject($projectId);
         $this->template->project = $project;
 
         if (!$project) {
