@@ -16,6 +16,13 @@ class ProjectPresenter extends Nette\Application\UI\Presenter
     }
 
     /**
+     * Seznam vsech projektu
+     */
+    public function renderDefault() {
+        $this->template->projects = $this->projectManager->getAllProjects();
+    }
+
+    /**
      * @param  int $projectId
      */
     public function renderEdit(int $projectId) {

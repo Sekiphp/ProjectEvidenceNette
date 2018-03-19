@@ -1,0 +1,27 @@
+{block content}
+    <h1 n:block="title">Seznam projektů</h1>
+
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Název projektu</th>
+            <th>Termín dokončení</th>
+            <th>Webový</th>
+            <th>Typ projektu</th>
+            <th>Akce</th>
+        </tr>
+        {foreach $projects as $project}
+            <tr>
+                <td>{$project->id}</td>
+                <td>{$project->name}</td>
+                <td>{$project->deadline|date:'j. n. Y'}</td>
+                <td>{$project->is_web ? 'ANO' : 'NE'}</td>
+                <td>{$project->type->name}</td>
+                <td>
+                    <a href="{link Project:edit $project->id}">Upravit projekt</a>
+                    <a href="{link Project:delete $project->id}">Smazat</a>
+                </td>
+            </tr>
+        {/foreach}
+    </table>
+{/block}
