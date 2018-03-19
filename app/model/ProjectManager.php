@@ -17,10 +17,6 @@ class ProjectManager {
         return $this->database->table('projects')->order('id DESC');
     }
 
-    public function getProjectTypes() {
-        return $this->database->table('types')->fetchPairs('id', 'name');
-    }
-
     public function getProject(int $projectId) {
         return $this->database->table('projects')->get($projectId);
     }

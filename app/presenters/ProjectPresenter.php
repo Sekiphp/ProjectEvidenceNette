@@ -5,14 +5,18 @@ namespace App\Presenters;
 use Nette;
 use Nette\Application\UI\Form;
 use App\Model\ProjectManager;
+use App\Model\ProjectTypeManager;
 
 
 class ProjectPresenter extends Nette\Application\UI\Presenter
 {
     private $projectManager;
 
-    public function __construct(ProjectManager $manager) {
-        $this->projectManager = $manager;
+    private $projectTypeManager;
+
+    public function __construct(ProjectManager $projectManager, ProjectTypeManager $projectTypeManager) {
+        $this->projectManager = $projectManager;
+        $this->projectTypeManager = $projectTypeManager;
     }
 
     /**
@@ -43,7 +47,7 @@ class ProjectPresenter extends Nette\Application\UI\Presenter
      */
     protected function createComponentProjectForm() {
         // priprava dat do selectu
-        $projectTypes = $this->projectManager->getProjectTypes();
+        $projectTypes = $this->projectTypeManager->getProjectTypes();
 
         $form = new Form; // means Nette\Application\UI\Form
 
