@@ -4,17 +4,16 @@ namespace App\Model;
 
 use Nette;
 
-class ProjectTypeManager {
+class ProjectTypeManager extends BaseModel {
     use Nette\SmartObject;
 
-    private $database;
+    protected $tableName = 'types';
 
     public function __construct(Nette\Database\Context $database) {
-        $this->database = $database;
+        parent::__construct($database, $this->tableName);
     }
 
-
     public function getProjectTypes() {
-        return $this->database->table('types')->fetchPairs('id', 'name');
+        return $this->getAll()->fetchPairs('id', 'name');
     }
 }

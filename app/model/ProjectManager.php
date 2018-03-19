@@ -4,28 +4,20 @@ namespace App\Model;
 
 use Nette;
 
-class ProjectManager {
+class ProjectManager extends BaseModel {
     use Nette\SmartObject;
 
-    private $database;
+    protected $tableName = 'projects';
 
     public function __construct(Nette\Database\Context $database) {
-        $this->database = $database;
-    }
-
-    public function getAllProjects() {
-        return $this->database->table('projects')->order('id DESC');
-    }
-
-    public function getProject(int $projectId) {
-        return $this->database->table('projects')->get($projectId);
+        parent::__construct($database, $this->tableName);
     }
 
     public function createProject(array $values) {
-        return $this->database->table('projects')->insert($values);
+        return $this->database->table($this->tableName)->insert($values);
     }
 
     public function deleteProjectById(int $projectId) {
-        return $this->database->table('projects')->where('id', $projectId)->delete();
+        return $this->database->table($this->tableName)->where('id', $projectId)->delete();
     }
 }

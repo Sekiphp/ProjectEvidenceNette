@@ -23,7 +23,7 @@ class ProjectPresenter extends Nette\Application\UI\Presenter
      * Seznam vsech projektu
      */
     public function renderDefault() {
-        $this->template->projects = $this->projectManager->getAllProjects();
+        $this->template->projects = $this->projectManager->getAll();
     }
 
     /**
@@ -73,7 +73,7 @@ class ProjectPresenter extends Nette\Application\UI\Presenter
 
         if ($projectId) {
             // budeme upravovat
-            $post = $this->projectManager->getProject($projectId);
+            $post = $this->projectManager->getById($projectId);
             $post->update($values);
 
             $this->flashMessage('Projekt byl úspěšně upraven', 'success');
@@ -116,7 +116,7 @@ class ProjectPresenter extends Nette\Application\UI\Presenter
      * @param  int $projectId
      */
     public function actionEdit(int $projectId) {
-        $project = $this->projectManager->getProject($projectId);
+        $project = $this->projectManager->getById($projectId);
         $this->template->project = $project;
 
         if (!$project) {
@@ -125,7 +125,7 @@ class ProjectPresenter extends Nette\Application\UI\Presenter
 
         // default hodnota v input type=date
         $proj = $project->toArray();
-        $proj['deadline'] = (string)$proj['deadline']->format("Y-m-d");
+        $proj['deadline'] = $proj['deadline']->format("Y-m-d");
 
         $this['projectForm']->setDefaults($proj);
     }
