@@ -1,9 +1,20 @@
 # ProjectEvidenceNette
 
-Pokud vyvíjíte lokálně a nemáte nastaveny VH, tak pro zobrazení projektu zadejte do prohlížeče: http://localhost/ProjectEvidenceNette/www/
+Zkušební aplikace v nette frameworku.
+Dump databáze se nachází ve složce `database`
 
-Dump databáze se nachází ve složce ```database/```
+```
+<VirtualHost *:80>
+    ServerName nette.localhost
+    DocumentRoot "C:/xampp72/htdocs/ProjectEvidenceNette/www"
+    ErrorLog "error_cheers24.log"
 
-TODO:
-- formy jako komponenty
-- generovaný výpis
+    <Directory "C:/xampp72/htdocs/ProjectEvidenceNette/www">
+        RewriteEngine On
+        Options Indexes Multiviews FollowSymLinks
+        AllowOverride All
+        Allow from all
+        Require all granted
+    </Directory>
+</VirtualHost>
+```
